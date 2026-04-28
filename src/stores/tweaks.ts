@@ -1,0 +1,47 @@
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import type { Tweaks } from '@/types'
+
+const STORAGE_KEY = 'listflix.v1.tweaks'
+
+const defaults: Tweaks = {
+  theme: 'dark',
+  density: 'normal',
+  layout: 'kanban',
+  accentHue: 265,
+  language: 'pt',
+}
+
+export const useTweaksStore = defineStore('tweaks', () => {
+  const tweaks = ref<Tweaks>({ ...defaults })
+  const showTweaks = ref(false)
+  const showStats = ref(false)
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) Object.assign(tweaks.value, JSON.parse(raw))
+    } catch {}
+    applyToDOM()
+  }
+
+  function persist() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(tweaks.value)) } catch {}
+  }
+
+  function set<K extends keyof Tweaks>(key: K, value: Tweaks[K]) {
+    tweaks.value[key] = value
+    applyToDOM()
+    persist()
+  }
+
+  function applyToDOM() {
+    const html = document.documentElement
+    html.dataset.theme   = tweaks.value.theme
+    html.dataset.density = tweaks.value.density
+    html.dataset.layout  = tweaks.value.layout
+    html.style.setProperty('--accent-h', String(tweaks.value.accentHue))
+  }
+
+  return { tweaks, showTweaks, showStats, load, set, applyToDOM }
+})
