@@ -2,6 +2,7 @@
 import { useRoute } from 'vue-router'
 import { useTweaksStore } from '@/stores/tweaks'
 import { tr } from '@/constants/i18n'
+import AppLogo from '@/components/icons/AppLogo.vue'
 
 const tweaks = useTweaksStore()
 const route = useRoute()
@@ -12,7 +13,7 @@ const search = defineModel<string>('search', { required: true })
 <template>
   <header class="topbar">
     <RouterLink to="/" class="brand">
-      <span class="brand-mark"></span>
+      <AppLogo class="brand-mark" />
       <span class="brand-name">List<span class="brand-dim">·</span>Flix</span>
       <span class="brand-badge">v1</span>
     </RouterLink>
@@ -83,8 +84,9 @@ const search = defineModel<string>('search', { required: true })
 
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .brand-mark {
-  width: 10px; height: 10px; border-radius: 3px;
-  background: var(--accent); box-shadow: 0 0 14px var(--accent-line);
+  color: var(--accent);
+  filter: drop-shadow(0 0 6px var(--accent-line));
+  flex-shrink: 0;
 }
 .brand-name { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; color: var(--fg-0); }
 .brand-dim { opacity: 0.4; }

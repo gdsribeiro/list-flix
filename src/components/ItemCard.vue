@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import type { Item } from '@/types'
-import { CATEGORIES } from '@/constants'
 import { useTweaksStore } from '@/stores/tweaks'
+import CategoryIcon from '@/components/icons/CategoryIcon.vue'
 
 defineProps<{ item: Item }>()
 const emit = defineEmits<{ click: [Item] }>()
 
 const tweaks = useTweaksStore()
-
-function catIcon(id: string) {
-  return CATEGORIES.find(c => c.id === id)?.icon ?? '◯'
-}
 
 function onDragStart(e: DragEvent, id: string) {
   e.dataTransfer?.setData('text/plain', id)
@@ -26,7 +22,7 @@ function onDragStart(e: DragEvent, id: string) {
   >
     <div v-if="tweaks.tweaks.showCovers" class="card-cover">
       <img v-if="item.cover" :src="item.cover" alt="" loading="lazy" @error="($event.target as HTMLImageElement).style.display = 'none'" />
-      <span v-else class="card-cover-icon">{{ catIcon(item.category) }}</span>
+      <span v-else class="card-cover-icon"><CategoryIcon :id="item.category" :size="28" /></span>
     </div>
 
     <div class="card-title">{{ item.title }}</div>
@@ -63,7 +59,7 @@ function onDragStart(e: DragEvent, id: string) {
   display: flex; align-items: center; justify-content: center;
 }
 .card-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.card-cover-icon { font-size: 22px; opacity: 0.35; }
+.card-cover-icon { display: flex; align-items: center; justify-content: center; opacity: 0.3; color: var(--fg-2); }
 
 .card-title {
   font-size: 13px; font-weight: 600; line-height: 1.3;

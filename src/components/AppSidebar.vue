@@ -5,6 +5,7 @@ import { useTweaksStore } from '@/stores/tweaks'
 import { useItemsStore } from '@/stores/items'
 import { tr } from '@/constants/i18n'
 import { computed } from 'vue'
+import CategoryIcon from '@/components/icons/CategoryIcon.vue'
 
 const props = defineProps<{
   activeCat: CategoryId | 'all'
@@ -29,7 +30,7 @@ const totalAll = computed(() => items.items.length)
       :data-active="activeCat === 'all' || undefined"
       @click="emit('update:activeCat', 'all')"
     >
-      <span class="sidebar-icon">◎</span>
+      <span class="sidebar-icon"><CategoryIcon id="all" :size="15" /></span>
       <span class="sidebar-label">{{ tr('allCategories', lang()) }}</span>
       <span class="sidebar-count">{{ totalAll }}</span>
     </button>
@@ -43,7 +44,7 @@ const totalAll = computed(() => items.items.length)
       :data-active="activeCat === cat.id || undefined"
       @click="emit('update:activeCat', cat.id)"
     >
-      <span class="sidebar-icon">{{ cat.icon }}</span>
+      <span class="sidebar-icon"><CategoryIcon :id="cat.id" :size="15" /></span>
       <span class="sidebar-label">{{ cat.labels[lang()] }}</span>
       <span class="sidebar-count">{{ counts[cat.id] ?? 0 }}</span>
     </button>
@@ -82,7 +83,7 @@ const totalAll = computed(() => items.items.length)
 .sidebar-item:hover { color: var(--fg-0); background: var(--bg-2); }
 .sidebar-item[data-active] { color: var(--fg-0); background: var(--bg-3); }
 
-.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+.sidebar-icon { display: flex; align-items: center; flex-shrink: 0; }
 .sidebar-label { flex: 1; }
 .sidebar-count {
   font-family: var(--font-mono);

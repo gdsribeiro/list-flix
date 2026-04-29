@@ -186,7 +186,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKey))
             <div class="field">
               <label class="field-label">{{ tr('category', lang()) }}</label>
               <select v-model="form.category" class="field-input">
-                <option v-for="c in CATEGORIES" :key="c.id" :value="c.id">{{ c.icon }} {{ c.labels[lang()] }}</option>
+                <option v-for="c in CATEGORIES" :key="c.id" :value="c.id">{{ c.labels[lang()] }}</option>
               </select>
             </div>
             <div class="field">

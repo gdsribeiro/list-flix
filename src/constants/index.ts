@@ -1,15 +1,15 @@
 import type { Category, Status } from '@/types'
 
 export const CATEGORIES: Category[] = [
-  { id: 'games',    icon: '🎮', labels: { pt: 'Jogos',         en: 'Games' } },
-  { id: 'books',    icon: '📚', labels: { pt: 'Livros',        en: 'Books' } },
-  { id: 'movies',   icon: '🎬', labels: { pt: 'Filmes',        en: 'Movies' } },
-  { id: 'shows',    icon: '📺', labels: { pt: 'Séries',        en: 'Shows' } },
-  { id: 'anime',    icon: '🍙', labels: { pt: 'Animes/Mangás', en: 'Anime/Manga' } },
-  { id: 'music',    icon: '🎵', labels: { pt: 'Álbuns',        en: 'Albums' } },
-  { id: 'podcasts', icon: '🎙️', labels: { pt: 'Podcasts',      en: 'Podcasts' } },
-  { id: 'docs',     icon: '🎞️', labels: { pt: 'Documentários', en: 'Documentaries' } },
-  { id: 'courses',  icon: '🎓', labels: { pt: 'Cursos',        en: 'Courses' } },
+  { id: 'games',    labels: { pt: 'Jogos',         en: 'Games' } },
+  { id: 'books',    labels: { pt: 'Livros',        en: 'Books' } },
+  { id: 'movies',   labels: { pt: 'Filmes',        en: 'Movies' } },
+  { id: 'shows',    labels: { pt: 'Séries',        en: 'Shows' } },
+  { id: 'anime',    labels: { pt: 'Animes/Mangás', en: 'Anime/Manga' } },
+  { id: 'music',    labels: { pt: 'Álbuns',        en: 'Albums' } },
+  { id: 'podcasts', labels: { pt: 'Podcasts',      en: 'Podcasts' } },
+  { id: 'docs',     labels: { pt: 'Documentários', en: 'Documentaries' } },
+  { id: 'courses',  labels: { pt: 'Cursos',        en: 'Courses' } },
 ]
 
 export const STATUSES: Status[] = [

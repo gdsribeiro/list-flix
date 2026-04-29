@@ -21,7 +21,6 @@ export interface Item {
 
 export interface Category {
   id: CategoryId
-  icon: string
   labels: { pt: string; en: string }
 }
 
