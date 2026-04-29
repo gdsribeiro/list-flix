@@ -6,16 +6,13 @@ const STORAGE_KEY = 'listflix.v1.tweaks'
 
 const defaults: Tweaks = {
   theme: 'dark',
-  density: 'normal',
   layout: 'kanban',
-  accentHue: 265,
   language: 'pt',
+  showCovers: true,
 }
 
 export const useTweaksStore = defineStore('tweaks', () => {
   const tweaks = ref<Tweaks>({ ...defaults })
-  const showTweaks = ref(false)
-  const showStats = ref(false)
 
   function load() {
     try {
@@ -37,11 +34,9 @@ export const useTweaksStore = defineStore('tweaks', () => {
 
   function applyToDOM() {
     const html = document.documentElement
-    html.dataset.theme   = tweaks.value.theme
-    html.dataset.density = tweaks.value.density
-    html.dataset.layout  = tweaks.value.layout
-    html.style.setProperty('--accent-h', String(tweaks.value.accentHue))
+    html.dataset.theme  = tweaks.value.theme
+    html.dataset.layout = tweaks.value.layout
   }
 
-  return { tweaks, showTweaks, showStats, load, set, applyToDOM }
+  return { tweaks, load, set, applyToDOM }
 })

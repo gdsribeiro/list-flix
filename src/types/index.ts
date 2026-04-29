@@ -10,9 +10,7 @@ export interface Item {
   category: CategoryId
   status: StatusId
   title: string
-  year: string
   platform: string
-  duration: string
   tags: string[]
   progress: number
   cover: string
@@ -35,7 +33,6 @@ export interface Status {
 
 export interface ApiResult {
   title: string
-  year: string
   cover: string
   meta: string
   tags: string[]
@@ -43,13 +40,16 @@ export interface ApiResult {
 
 export type Language = 'pt' | 'en'
 export type Theme = 'dark' | 'light'
-export type Density = 'compact' | 'normal' | 'spacious'
 export type Layout = 'kanban' | 'grid' | 'list'
 
 export interface Tweaks {
   theme: Theme
-  density: Density
   layout: Layout
-  accentHue: number
   language: Language
+  showCovers: boolean
+}
+
+export interface SearchPageResult {
+  results: ApiResult[]
+  total: number
 }

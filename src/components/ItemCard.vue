@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { Item } from '@/types'
 import { CATEGORIES } from '@/constants'
+import { useTweaksStore } from '@/stores/tweaks'
 
 defineProps<{ item: Item }>()
 const emit = defineEmits<{ click: [Item] }>()
+
+const tweaks = useTweaksStore()
 
 function catIcon(id: string) {
   return CATEGORIES.find(c => c.id === id)?.icon ?? '◯'
@@ -21,18 +24,15 @@ function onDragStart(e: DragEvent, id: string) {
     @click="emit('click', item)"
     @dragstart="onDragStart($event, item.id)"
   >
-    <div class="card-cover">
+    <div v-if="tweaks.tweaks.showCovers" class="card-cover">
       <img v-if="item.cover" :src="item.cover" alt="" loading="lazy" @error="($event.target as HTMLImageElement).style.display = 'none'" />
       <span v-else class="card-cover-icon">{{ catIcon(item.category) }}</span>
     </div>
 
     <div class="card-title">{{ item.title }}</div>
 
-    <div class="card-meta">
-      <span v-if="item.year">{{ item.year }}</span>
-      <span v-if="item.year && item.duration" class="sep">·</span>
-      <span v-if="item.duration">{{ item.duration }}</span>
-      <span v-if="item.platform" class="platform">{{ item.platform }}</span>
+    <div v-if="item.platform" class="card-meta">
+      <span class="platform">{{ item.platform }}</span>
     </div>
 
     <div v-if="item.tags.length" class="card-tags">
@@ -73,10 +73,8 @@ function onDragStart(e: DragEvent, id: string) {
   display: flex; flex-wrap: wrap; align-items: center;
   gap: 5px; color: var(--fg-2); font-size: 11px; font-family: var(--font-mono);
 }
-.sep { opacity: 0.45; }
 .platform {
-  padding: 1px 6px; background: var(--bg-3); border-radius: 4px;
-  color: var(--fg-1); margin-left: auto;
+  padding: 1px 6px; background: var(--bg-3); border-radius: 4px; color: var(--fg-1);
 }
 .card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
 .tag {

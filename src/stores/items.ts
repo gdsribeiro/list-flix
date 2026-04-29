@@ -3,14 +3,13 @@ import { ref } from 'vue'
 import type { Item, CategoryId, StatusId } from '@/types'
 import { CATEGORIES } from '@/constants'
 
-export type SortKey = 'recent' | 'title' | 'year'
+export type SortKey = 'recent' | 'title'
 
 const STORAGE_KEY = 'listflix.v1.items'
 
 function uid(): string {
   return Math.random().toString(36).slice(2, 10)
 }
-
 
 export const useItemsStore = defineStore('items', () => {
   const items = ref<Item[]>([])
@@ -62,15 +61,15 @@ export const useItemsStore = defineStore('items', () => {
     if (Array.isArray(data)) { items.value = data; persist() }
   }
 
-function countsByCategory(): Record<CategoryId, number> {
+  function countsByCategory(): Record<CategoryId, number> {
     const counts = {} as Record<CategoryId, number>
     for (const c of CATEGORIES) counts[c.id] = 0
     for (const i of items.value) counts[i.category] = (counts[i.category] ?? 0) + 1
     return counts
   }
 
-  function getFiltered(category: CategoryId, search: string, sort: SortKey): Item[] {
-    let xs = items.value.filter(i => i.category === category)
+  function getFiltered(category: CategoryId | 'all', search: string, sort: SortKey): Item[] {
+    let xs = category === 'all' ? [...items.value] : items.value.filter(i => i.category === category)
     if (search.trim()) {
       const q = search.toLowerCase()
       xs = xs.filter(i =>
@@ -82,7 +81,6 @@ function countsByCategory(): Record<CategoryId, number> {
     }
     const out = [...xs]
     if (sort === 'title') out.sort((a, b) => a.title.localeCompare(b.title))
-    else if (sort === 'year') out.sort((a, b) => (parseInt(b.year) || 0) - (parseInt(a.year) || 0))
     else out.sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))
     return out
   }
