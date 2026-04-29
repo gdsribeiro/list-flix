@@ -1,36 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap');
 
 /* ── Tokens ─────────────────────────────────────────────── */
 :root {
-  --bg-0: oklch(0.13 0.008 260);
-  --bg-1: oklch(0.16 0.009 260);
-  --bg-2: oklch(0.19 0.010 260);
-  --bg-3: oklch(0.23 0.011 260);
-  --bg-4: oklch(0.27 0.012 260);
-  --bg-elevated: oklch(0.21 0.010 260);
+  /* Backgrounds — tinted toward amber hue */
+  --bg-0: oklch(0.12 0.008 55);
+  --bg-1: oklch(0.15 0.009 55);
+  --bg-2: oklch(0.18 0.010 55);
+  --bg-3: oklch(0.22 0.011 55);
+  --bg-4: oklch(0.27 0.012 55);
+  --bg-elevated: oklch(0.20 0.010 55);
 
-  --fg-0: oklch(0.97 0.005 80);
-  --fg-1: oklch(0.78 0.008 70);
-  --fg-2: oklch(0.55 0.008 70);
-  --fg-3: oklch(0.38 0.008 70);
+  /* Foregrounds */
+  --fg-0: oklch(0.97 0.008 75);
+  --fg-1: oklch(0.76 0.010 70);
+  --fg-2: oklch(0.52 0.008 65);
+  --fg-3: oklch(0.36 0.007 60);
 
-  --border-0: oklch(0.26 0.008 260);
-  --border-1: oklch(0.34 0.010 260);
+  /* Borders */
+  --border-0: oklch(0.25 0.009 55);
+  --border-1: oklch(0.33 0.011 55);
 
-  --accent:      oklch(0.72 0.18 265);
-  --accent-fg:   oklch(0.98 0.01 265);
-  --accent-soft: oklch(0.72 0.18 265 / 0.14);
-  --accent-line: oklch(0.72 0.18 265 / 0.40);
+  /* Accent — warm amber gold */
+  --accent:      oklch(0.74 0.17 68);
+  --accent-fg:   oklch(0.10 0.040 60);
+  --accent-soft: oklch(0.74 0.17 68 / 0.13);
+  --accent-line: oklch(0.74 0.17 68 / 0.38);
 
-  --st-wishlist: oklch(0.72 0.06 280);
-  --st-planned:  oklch(0.74 0.06 220);
-  --st-active:   oklch(0.76 0.14 265);
-  --st-paused:   oklch(0.70 0.05 70);
-  --st-done:     oklch(0.74 0.09 145);
-  --st-dropped:  oklch(0.62 0.05 25);
+  /* Status semantics */
+  --st-wishlist: oklch(0.70 0.07 290);
+  --st-planned:  oklch(0.72 0.08 230);
+  --st-active:   oklch(0.80 0.12 90);
+  --st-paused:   oklch(0.72 0.06 75);
+  --st-done:     oklch(0.72 0.11 148);
+  --st-dropped:  oklch(0.62 0.07 25);
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-mono: ui-monospace, 'Cascadia Code', 'SF Mono', monospace;
 
   --r-sm: 6px;
   --r-md: 10px;
@@ -38,34 +43,42 @@
   --r-xl: 20px;
 
   --shadow-card:  0 1px 0 oklch(1 0 0 / 0.03), 0 0 0 1px oklch(0 0 0 / 0.5);
-  --shadow-modal: 0 32px 80px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(1 0 0 / 0.07);
+  --shadow-modal: 0 32px 80px oklch(0 0 0 / 0.72), 0 0 0 1px oklch(1 0 0 / 0.06);
   --shadow-float: 0 8px 24px oklch(0 0 0 / 0.4);
 
-  --t-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
-  --t-med:  200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --t-fast: 120ms cubic-bezier(0.22, 1, 0.36, 1);
+  --t-med:  200ms cubic-bezier(0.22, 1, 0.36, 1);
+  --t-slow: 320ms cubic-bezier(0.22, 1, 0.36, 1);
 
   --card-pad: 12px;
   --card-gap: 10px;
 }
 
 [data-theme="light"] {
-  --bg-0: oklch(0.95 0.004 260);
-  --bg-1: oklch(0.97 0.003 260);
-  --bg-2: oklch(1    0     0);
-  --bg-3: oklch(0.93 0.005 260);
-  --bg-4: oklch(0.90 0.006 260);
-  --bg-elevated: oklch(1 0 0);
+  --bg-0: oklch(0.96 0.006 70);
+  --bg-1: oklch(0.98 0.004 70);
+  --bg-2: oklch(1    0.002 70);
+  --bg-3: oklch(0.93 0.007 70);
+  --bg-4: oklch(0.89 0.009 70);
+  --bg-elevated: oklch(1 0.002 70);
 
-  --fg-0: oklch(0.18 0.010 260);
-  --fg-1: oklch(0.35 0.010 260);
-  --fg-2: oklch(0.52 0.010 260);
-  --fg-3: oklch(0.68 0.008 260);
+  --fg-0: oklch(0.17 0.012 55);
+  --fg-1: oklch(0.34 0.012 55);
+  --fg-2: oklch(0.50 0.010 55);
+  --fg-3: oklch(0.66 0.008 55);
 
-  --border-0: oklch(0.87 0.005 260);
-  --border-1: oklch(0.78 0.007 260);
+  --border-0: oklch(0.86 0.008 65);
+  --border-1: oklch(0.76 0.011 65);
 
-  --shadow-card:  0 1px 3px oklch(0 0 0 / 0.06), 0 0 0 1px oklch(0 0 0 / 0.07);
-  --shadow-modal: 0 24px 64px oklch(0 0 0 / 0.18), 0 0 0 1px oklch(0 0 0 / 0.08);
+  --accent:      oklch(0.60 0.18 62);
+  --accent-fg:   oklch(0.98 0.005 68);
+  --accent-soft: oklch(0.60 0.18 62 / 0.10);
+  --accent-line: oklch(0.60 0.18 62 / 0.32);
+
+  --st-active: oklch(0.65 0.14 88);
+
+  --shadow-card:  0 1px 3px oklch(0 0 0 / 0.07), 0 0 0 1px oklch(0 0 0 / 0.07);
+  --shadow-modal: 0 24px 64px oklch(0 0 0 / 0.16), 0 0 0 1px oklch(0 0 0 / 0.07);
 }
 
 
@@ -87,16 +100,25 @@ button, input, select, textarea { font-family: inherit; font-size: 14px; }
 #app { height: 100%; }
 
 /* ── Scrollbars ─────────────────────────────────────────── */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--border-0);
-  border-radius: 4px;
-  border: 2px solid transparent;
-  background-clip: content-box;
+  border-radius: 99px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--border-1);
-  border: 2px solid transparent;
-  background-clip: content-box;
+::-webkit-scrollbar-thumb:hover { background: var(--border-1); }
+
+/* ── Modal transition ───────────────────────────────────── */
+.modal-enter-active { transition: opacity var(--t-med), transform var(--t-med); }
+.modal-leave-active { transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.modal-enter-from  { opacity: 0; transform: translateY(10px) scale(0.98); }
+.modal-leave-to    { opacity: 0; transform: translateY(6px) scale(0.99); }
+
+/* ── Backdrop transition ────────────────────────────────── */
+.backdrop-enter-active { transition: opacity var(--t-med); }
+.backdrop-leave-active { transition: opacity 150ms ease-in; }
+.backdrop-enter-from, .backdrop-leave-to { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
