@@ -93,7 +93,6 @@ const statusPct = computed(() =>
           <div v-else class="chart">
             <div v-for="x in byCat" :key="x.cat.id" class="chart-row">
               <div class="chart-label">
-                <span>{{ x.cat.icon }}</span>
                 <span class="chart-label-text">{{ x.cat.labels[lang()] }}</span>
               </div>
               <div class="chart-track">

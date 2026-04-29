@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, watch, computed, onMounted, onUnmounted } from 'vue'
-import type { Item, ApiResult, CategoryId } from '@/types'
+import type { Item, ApiResult } from '@/types'
 import { CATEGORIES, STATUSES } from '@/constants'
 import { tr } from '@/constants/i18n'
 import { useTweaksStore } from '@/stores/tweaks'

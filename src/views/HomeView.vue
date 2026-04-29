@@ -73,7 +73,7 @@ function onDrop(itemId: string, statusId: string) {
     <div class="home-toolbar">
       <div class="toolbar-left">
         <span class="cat-label">
-          <template v-if="activeCatObj">{{ activeCatObj.icon }} {{ activeCatObj.labels[lang()] }}</template>
+          <template v-if="activeCatObj">{{ activeCatObj.labels[lang()] }}</template>
           <template v-else>{{ tr('allCategories', lang()) }}</template>
         </span>
         <span class="item-count">{{ visible.length }}</span>
@@ -100,7 +100,7 @@ function onDrop(itemId: string, statusId: string) {
     <main class="board-wrap">
       <div v-if="visible.length === 0 && !search" class="empty">
         <div class="empty-glyph">
-          <span>{{ activeCatObj?.icon ?? '◎' }}</span>
+          <span>◎</span>
         </div>
         <div class="empty-title">{{ tr('emptyTitle', lang()) }}</div>
         <div class="empty-sub">{{ tr('emptySub', lang()) }}</div>
