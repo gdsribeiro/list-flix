@@ -31,39 +31,28 @@ function onKey(e: KeyboardEvent) {
       </div>
 
       <div class="about-body">
-        <section class="about-section">
-          <h3 class="section-title">{{ isPt() ? 'O que é' : 'What it is' }}</h3>
-          <p>{{ isPt()
-            ? 'List·Flix é um tracker pessoal de mídia. Organize filmes, séries, jogos, livros, animes e mais em um único lugar, nos formatos kanban, grade ou lista.'
-            : 'List·Flix is a personal media tracker. Organize movies, shows, games, books, anime, and more in one place, in kanban, grid, or list views.'
-          }}</p>
-        </section>
+        <p class="about-intro">{{ isPt()
+          ? 'Um lugar só seu para acompanhar o que você assiste, joga e lê — sem distrações, sem algoritmos, sem pressa.'
+          : 'Your own place to track what you watch, play, and read — no distractions, no algorithms, no rush.'
+        }}</p>
 
         <section class="about-section">
           <h3 class="section-title">{{ isPt() ? 'Seus dados' : 'Your data' }}</h3>
           <div class="data-card">
             <div class="data-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/>
                 <path d="M5 7h6M5 10h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
               </svg>
             </div>
             <p>{{ isPt()
-              ? 'Todos os seus dados ficam salvos localmente no navegador (localStorage). Nenhuma informação é enviada a servidores. Sem conta, sem nuvem, sem rastreamento.'
-              : 'All your data is saved locally in the browser (localStorage). No information is sent to servers. No account, no cloud, no tracking.'
+              ? 'Tudo fica salvo localmente no seu navegador. Sem conta, sem nuvem, sem rastreamento.'
+              : 'Everything is saved locally in your browser. No account, no cloud, no tracking.'
             }}</p>
           </div>
           <p class="data-note">{{ isPt()
-            ? 'Para não perder seus dados, use a opção Exportar JSON em Configurações. O arquivo pode ser importado a qualquer momento.'
-            : 'To avoid losing your data, use the Export JSON option in Settings. The file can be imported at any time.'
-          }}</p>
-        </section>
-
-        <section class="about-section">
-          <h3 class="section-title">{{ isPt() ? 'Busca online' : 'Online search' }}</h3>
-          <p>{{ isPt()
-            ? 'Ao adicionar um item, você pode buscar informações em APIs públicas (Open Library, iTunes, Jikan, Wikipedia). Essas buscas fazem requisições diretamente do seu navegador para os serviços públicos.'
-            : 'When adding an item, you can search for information from public APIs (Open Library, iTunes, Jikan, Wikipedia). These searches make requests directly from your browser to public services.'
+            ? 'Para fazer backup, exporte seus dados em JSON via Configurações.'
+            : 'To back up your data, export it as JSON via Settings.'
           }}</p>
         </section>
 
@@ -147,6 +136,13 @@ function onKey(e: KeyboardEvent) {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.about-intro {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg-1);
 }
 
 .about-section { display: flex; flex-direction: column; gap: 8px; }
