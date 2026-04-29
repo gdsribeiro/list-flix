@@ -83,12 +83,16 @@ function onDragStart(e: DragEvent, id: string) {
   line-height: 1.35;
   color: var(--fg-0);
   margin-bottom: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .card-meta {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 4px;
+  overflow: hidden;
 }
 .platform {
   padding: 1px 6px;
@@ -97,6 +101,10 @@ function onDragStart(e: DragEvent, id: string) {
   color: var(--fg-2);
   font-size: 10px;
   font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 .card-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
 .tag {
@@ -106,6 +114,10 @@ function onDragStart(e: DragEvent, id: string) {
   font-size: 10px;
   color: var(--fg-3);
   border: 1px solid var(--border-0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
 }
 
 /* ── List layout ─────────────────────────────────────────── */
