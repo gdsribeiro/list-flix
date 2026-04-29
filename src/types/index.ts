@@ -39,7 +39,7 @@ export interface ApiResult {
 
 export type Language = 'pt' | 'en'
 export type Theme = 'dark' | 'light'
-export type Layout = 'kanban' | 'grid' | 'list'
+export type Layout = 'quadro' | 'galeria' | 'historico'
 
 export interface Tweaks {
   theme: Theme
