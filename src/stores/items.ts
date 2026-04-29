@@ -52,29 +52,32 @@ export const useItemsStore = defineStore('items', () => {
     }
   }
 
-  function reorderInStatus(draggedId: string, targetId: string) {
-    const dragged = items.value.find(i => i.id === draggedId)
-    const target = items.value.find(i => i.id === targetId)
-    if (!dragged || !target || dragged.status !== target.status) return
+  function reorderInStatus(draggedId: string, toIndex: number) {
+    const item = items.value.find(i => i.id === draggedId)
+    if (!item) return
 
     const statusItems = items.value
-      .filter(i => i.status === dragged.status)
+      .filter(i => i.status === item.status)
       .sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))
 
-    const fromIdx = statusItems.findIndex(i => i.id === draggedId)
-    const toIdx = statusItems.findIndex(i => i.id === targetId)
-    const adjustedToIdx = fromIdx < toIdx ? toIdx - 1 : toIdx
-    statusItems.splice(fromIdx, 1)
-    statusItems.splice(adjustedToIdx, 0, dragged)
+    const fromIndex = statusItems.findIndex(i => i.id === draggedId)
+    if (fromIndex === -1) return
+
+    statusItems.splice(fromIndex, 1)
+    const insertAt = Math.min(toIndex > fromIndex ? toIndex - 1 : toIndex, statusItems.length)
+    statusItems.splice(insertAt, 0, item)
 
     const now = Date.now()
-    statusItems.forEach((item, idx) => {
-      const globalIdx = items.value.findIndex(i => i.id === item.id)
-      if (globalIdx !== -1) {
-        items.value[globalIdx] = { ...items.value[globalIdx], updatedAt: now - idx * 1000 }
-      }
+    statusItems.forEach((si, idx) => {
+      const gi = items.value.findIndex(i => i.id === si.id)
+      if (gi !== -1) items.value[gi] = { ...items.value[gi], updatedAt: now - idx * 1000 }
     })
     persist()
+  }
+
+  function moveToStatusAt(id: string, status: StatusId, toIndex: number) {
+    moveToStatus(id, status)
+    reorderInStatus(id, toIndex + 1)
   }
 
   function exportJson(): string {
@@ -110,7 +113,7 @@ export const useItemsStore = defineStore('items', () => {
     return out
   }
 
-  return { items, load, add, update, remove, moveToStatus, reorderInStatus, exportJson, importJson, countsByCategory, getFiltered }
+  return { items, load, add, update, remove, moveToStatus, moveToStatusAt, reorderInStatus, exportJson, importJson, countsByCategory, getFiltered }
 })
 
 export { uid }

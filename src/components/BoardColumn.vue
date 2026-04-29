@@ -8,58 +8,81 @@ const props = defineProps<{ status: Status; items: Item[] }>()
 const emit = defineEmits<{
   addItem: [statusId: string]
   editItem: [Item]
-  drop: [itemId: string, statusId: string]
-  reorder: [draggedId: string, targetId: string]
+  drop: [itemId: string, statusId: string, toIndex: number]
+  reorder: [draggedId: string, toIndex: number]
 }>()
 
 const tweaks = useTweaksStore()
 const isDragOver = ref(false)
-const dragOverItemId = ref<string | null>(null)
+const dragOverIdx = ref<number | null>(null)
 
 function onColumnDragOver(e: DragEvent) {
   e.preventDefault()
-  isDragOver.value = true
+  if (dragOverIdx.value === null) isDragOver.value = true
 }
 
 function onColumnDragLeave(e: DragEvent) {
   const el = e.currentTarget as HTMLElement
-  if (!el.contains(e.relatedTarget as Node)) isDragOver.value = false
-}
-
-function onColumnDrop(e: DragEvent) {
-  if (dragOverItemId.value !== null) return
-  e.preventDefault()
-  isDragOver.value = false
-  const id = e.dataTransfer?.getData('text/plain')
-  if (id) emit('drop', id, props.status.id)
-}
-
-function onItemDragOver(e: DragEvent, itemId: string) {
-  e.preventDefault()
-  e.stopPropagation()
-  isDragOver.value = false
-  dragOverItemId.value = itemId
-}
-
-function onItemDragLeave(e: DragEvent, itemId: string) {
-  const el = e.currentTarget as HTMLElement
-  if (!el.contains(e.relatedTarget as Node) && dragOverItemId.value === itemId) {
-    dragOverItemId.value = null
+  if (!el.contains(e.relatedTarget as Node)) {
+    isDragOver.value = false
+    dragOverIdx.value = null
   }
 }
 
-function onItemDrop(e: DragEvent, targetId: string) {
+function onColumnDrop(e: DragEvent) {
+  e.preventDefault()
+  isDragOver.value = false
+  dragOverIdx.value = null
+  const id = e.dataTransfer?.getData('text/plain')
+  if (id) emit('drop', id, props.status.id, props.items.length)
+}
+
+function onItemDragOver(e: DragEvent, idx: number) {
   e.preventDefault()
   e.stopPropagation()
   isDragOver.value = false
-  dragOverItemId.value = null
+  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+  dragOverIdx.value = e.clientY > rect.top + rect.height / 2 ? idx + 1 : idx
+}
+
+function onItemDragLeave(e: DragEvent) {
+  const el = e.currentTarget as HTMLElement
+  if (!el.contains(e.relatedTarget as Node)) dragOverIdx.value = null
+}
+
+function onItemDrop(e: DragEvent, idx: number) {
+  e.preventDefault()
+  e.stopPropagation()
+  isDragOver.value = false
+  const finalIdx = dragOverIdx.value ?? idx
+  dragOverIdx.value = null
   const draggedId = e.dataTransfer?.getData('text/plain')
-  if (!draggedId || draggedId === targetId) return
-  const isInSameColumn = props.items.some(i => i.id === draggedId)
-  if (isInSameColumn) {
-    emit('reorder', draggedId, targetId)
+  if (!draggedId) return
+  if (props.items.some(i => i.id === draggedId)) {
+    emit('reorder', draggedId, finalIdx)
   } else {
-    emit('drop', draggedId, props.status.id)
+    emit('drop', draggedId, props.status.id, finalIdx)
+  }
+}
+
+function onEndDragOver(e: DragEvent) {
+  e.preventDefault()
+  e.stopPropagation()
+  isDragOver.value = false
+  dragOverIdx.value = props.items.length
+}
+
+function onEndDrop(e: DragEvent) {
+  e.preventDefault()
+  e.stopPropagation()
+  isDragOver.value = false
+  dragOverIdx.value = null
+  const draggedId = e.dataTransfer?.getData('text/plain')
+  if (!draggedId) return
+  if (props.items.some(i => i.id === draggedId)) {
+    emit('reorder', draggedId, props.items.length)
+  } else {
+    emit('drop', draggedId, props.status.id, props.items.length)
   }
 }
 </script>
@@ -84,17 +107,24 @@ function onItemDrop(e: DragEvent, targetId: string) {
     </div>
 
     <div class="column-body">
+      <template v-for="(item, idx) in items" :key="item.id">
+        <div class="drop-line" :class="{ active: dragOverIdx === idx }" aria-hidden="true" />
+        <div
+          class="card-slot"
+          @dragover="onItemDragOver($event, idx)"
+          @dragleave="onItemDragLeave"
+          @drop="onItemDrop($event, idx)"
+        >
+          <ItemCard :item="item" @click="emit('editItem', item)" />
+        </div>
+      </template>
+      <div class="drop-line" :class="{ active: dragOverIdx === items.length }" aria-hidden="true" />
       <div
-        v-for="item in items"
-        :key="item.id"
-        class="card-slot"
-        :class="{ 'drop-above': dragOverItemId === item.id }"
-        @dragover="onItemDragOver($event, item.id)"
-        @dragleave="onItemDragLeave($event, item.id)"
-        @drop="onItemDrop($event, item.id)"
-      >
-        <ItemCard :item="item" @click="emit('editItem', item)" />
-      </div>
+        class="end-zone"
+        @dragover.prevent.stop="onEndDragOver"
+        @dragleave="dragOverIdx = null; isDragOver = false"
+        @drop.prevent.stop="onEndDrop"
+      />
     </div>
   </div>
 </template>
@@ -119,7 +149,7 @@ function onItemDrop(e: DragEvent, targetId: string) {
   align-items: center;
   gap: 7px;
   padding-bottom: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 2px;
   border-bottom: 1px solid var(--border-0);
 }
 .col-title {
@@ -158,23 +188,28 @@ function onItemDrop(e: DragEvent, targetId: string) {
   background: var(--bg-3);
   border-color: var(--col-color, var(--border-1));
 }
-.column-body { display: flex; flex-direction: column; gap: var(--card-gap); flex: 1; }
 
-/* Indicador de posição via pseudo-elemento — não causa layout shift */
-.card-slot { border-radius: var(--r-md); }
-.card-slot::before {
-  content: '';
-  display: block;
+.column-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-top: 8px;
+}
+
+.drop-line {
   height: 0;
   border-radius: 99px;
   background: var(--col-color, var(--accent));
-  opacity: 0;
-  transition: height var(--t-fast), opacity var(--t-fast), margin-bottom var(--t-fast);
+  transition: height var(--t-fast), margin var(--t-fast);
   pointer-events: none;
+  flex-shrink: 0;
 }
-.card-slot.drop-above::before {
-  height: 3px;
-  opacity: 0.8;
-  margin-bottom: 6px;
+.drop-line.active {
+  height: 4px;
+  margin: 2px 0;
 }
+
+.card-slot { margin-bottom: var(--card-gap); }
+
+.end-zone { flex: 1; min-height: 32px; }
 </style>

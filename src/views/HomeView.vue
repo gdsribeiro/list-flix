@@ -74,12 +74,12 @@ function deleteItem(id: string) {
   editingItem.value = null
 }
 
-function onDrop(itemId: string, statusId: string) {
-  itemsStore.moveToStatus(itemId, statusId as any)
+function onDrop(itemId: string, statusId: string, toIndex: number) {
+  itemsStore.moveToStatusAt(itemId, statusId as any, toIndex)
 }
 
-function onReorder(draggedId: string, targetId: string) {
-  itemsStore.reorderInStatus(draggedId, targetId)
+function onReorder(draggedId: string, toIndex: number) {
+  itemsStore.reorderInStatus(draggedId, toIndex)
 }
 
 function toggleStatus(id: string) {
