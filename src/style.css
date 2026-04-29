@@ -17,11 +17,10 @@
   --border-0: oklch(0.26 0.008 260);
   --border-1: oklch(0.34 0.010 260);
 
-  --accent-h: 265;
-  --accent:      oklch(0.72 0.18 var(--accent-h));
-  --accent-fg:   oklch(0.98 0.01 var(--accent-h));
-  --accent-soft: oklch(0.72 0.18 var(--accent-h) / 0.14);
-  --accent-line: oklch(0.72 0.18 var(--accent-h) / 0.40);
+  --accent:      oklch(0.72 0.18 265);
+  --accent-fg:   oklch(0.98 0.01 265);
+  --accent-soft: oklch(0.72 0.18 265 / 0.14);
+  --accent-line: oklch(0.72 0.18 265 / 0.40);
 
   --st-wishlist: oklch(0.72 0.06 280);
   --st-planned:  oklch(0.74 0.06 220);
@@ -69,8 +68,6 @@
   --shadow-modal: 0 24px 64px oklch(0 0 0 / 0.18), 0 0 0 1px oklch(0 0 0 / 0.08);
 }
 
-[data-density="compact"]  { --card-pad: 8px;  --card-gap: 6px; }
-[data-density="spacious"] { --card-pad: 16px; --card-gap: 14px; }
 
 /* ── Reset ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
