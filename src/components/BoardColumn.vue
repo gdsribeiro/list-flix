@@ -137,7 +137,9 @@ function onEndDrop(e: DragEvent) {
   padding: 12px;
   display: flex;
   flex-direction: column;
+  height: 100%;
   min-height: 200px;
+  overflow: hidden;
   transition: border-color var(--t-fast), background var(--t-fast);
 }
 .column.drag-over {
@@ -159,6 +161,9 @@ function onEndDrop(e: DragEvent) {
   text-transform: uppercase;
   color: var(--col-color, var(--fg-2));
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .count {
   font-family: var(--font-mono);
@@ -193,7 +198,10 @@ function onEndDrop(e: DragEvent) {
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding-top: 8px;
+  scrollbar-width: thin;
 }
 
 .drop-line {

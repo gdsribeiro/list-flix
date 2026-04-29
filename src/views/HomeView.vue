@@ -24,9 +24,8 @@ const editingItem = ref<Item | null>(null)
 const isNewItem = ref(false)
 const filterStatus = ref<string | null>(null)
 
-// Reset status filter when switching to kanban
 watch(() => tweaks.tweaks.layout, (layout) => {
-  if (layout === 'kanban') filterStatus.value = null
+  if (layout !== 'galeria') filterStatus.value = null
 })
 
 const visible = computed(() => itemsStore.getFiltered(props.activeCat, props.search, sort.value))
@@ -34,13 +33,41 @@ const visible = computed(() => itemsStore.getFiltered(props.activeCat, props.sea
 const byStatus = computed(() => {
   const map: Record<string, Item[]> = {}
   for (const s of STATUSES) map[s.id] = []
-  for (const i of visible.value) map[i.status].push(i)
+  for (const i of itemsStore.getFilteredUnsorted(props.activeCat, props.search)) {
+    map[i.status].push(i)
+  }
   return map
 })
 
 const displayItems = computed(() =>
   filterStatus.value ? visible.value.filter(i => i.status === filterStatus.value) : visible.value
 )
+
+const historyGroups = computed(() => {
+  const now = Date.now()
+  const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0)
+  const weekAgo  = now - 7  * 86400000
+  const monthAgo = now - 30 * 86400000
+
+  const groups = [
+    { key: 'today', label: () => tr('periodToday',  lang()), items: [] as Item[] },
+    { key: 'week',  label: () => tr('periodWeek',   lang()), items: [] as Item[] },
+    { key: 'month', label: () => tr('periodMonth',  lang()), items: [] as Item[] },
+    { key: 'older', label: () => tr('periodOlder',  lang()), items: [] as Item[] },
+  ]
+
+  const sorted = [...visible.value].sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))
+
+  for (const item of sorted) {
+    const t = item.updatedAt ?? 0
+    if      (t >= todayStart.getTime()) groups[0].items.push(item)
+    else if (t >= weekAgo)              groups[1].items.push(item)
+    else if (t >= monthAgo)             groups[2].items.push(item)
+    else                                groups[3].items.push(item)
+  }
+
+  return groups.filter(g => g.items.length > 0)
+})
 
 const activeCatObj = computed(() =>
   props.activeCat === 'all' ? null : CATEGORIES.find(c => c.id === props.activeCat)
@@ -91,19 +118,15 @@ function toggleStatus(id: string) {
   <div class="home-wrap">
     <div class="home-toolbar">
       <div class="toolbar-left">
-        <span class="cat-label">
-          <template v-if="activeCatObj">{{ activeCatObj.labels[lang()] }}</template>
-          <template v-else>{{ tr('allCategories', lang()) }}</template>
-        </span>
-        <span v-if="visible.length" class="item-count">{{ displayItems.length }}</span>
+        <div class="layout-seg">
+          <button :class="{ active: tweaks.tweaks.layout === 'quadro' }"    @click="tweaks.set('layout', 'quadro')">{{ tr('layoutQuadro', lang()) }}</button>
+          <button :class="{ active: tweaks.tweaks.layout === 'galeria' }"   @click="tweaks.set('layout', 'galeria')">{{ tr('layoutGaleria', lang()) }}</button>
+          <button :class="{ active: tweaks.tweaks.layout === 'historico' }" @click="tweaks.set('layout', 'historico')">{{ tr('layoutHistorico', lang()) }}</button>
+        </div>
+        <span v-if="activeCatObj" class="cat-label">{{ activeCatObj.labels[lang()] }}</span>
       </div>
       <div class="toolbar-right">
-        <div class="layout-seg">
-          <button :class="{ active: tweaks.tweaks.layout === 'kanban' }" @click="tweaks.set('layout', 'kanban')">{{ tr('layoutKanban', lang()) }}</button>
-          <button :class="{ active: tweaks.tweaks.layout === 'grid' }" @click="tweaks.set('layout', 'grid')">{{ tr('layoutGrid', lang()) }}</button>
-          <button :class="{ active: tweaks.tweaks.layout === 'list' }" @click="tweaks.set('layout', 'list')">{{ tr('layoutList', lang()) }}</button>
-        </div>
-        <select class="sort-select" v-model="sort" :aria-label="tr('sortRecent', lang())">
+        <select v-if="tweaks.tweaks.layout === 'galeria'" class="sort-select" v-model="sort" :aria-label="tr('sortRecent', lang())">
           <option value="recent">{{ tr('sortRecent', lang()) }}</option>
           <option value="title">{{ tr('sortTitle', lang()) }}</option>
         </select>
@@ -116,16 +139,8 @@ function toggleStatus(id: string) {
       </div>
     </div>
 
-    <!-- Status filter bar — only in grid/list -->
-    <div v-if="tweaks.tweaks.layout !== 'kanban'" class="status-bar">
-      <button
-        class="status-chip"
-        :class="{ active: filterStatus === null }"
-        @click="filterStatus = null"
-      >
-        {{ lang() === 'pt' ? 'Todos' : 'All' }}
-        <span class="chip-count">{{ visible.length }}</span>
-      </button>
+    <!-- Status filter bar — somente Galeria -->
+    <div v-if="tweaks.tweaks.layout === 'galeria'" class="status-bar">
       <template v-for="s in STATUSES" :key="s.id">
         <button
           v-if="byStatus[s.id]?.length"
@@ -140,8 +155,9 @@ function toggleStatus(id: string) {
       </template>
     </div>
 
-    <main class="board-wrap">
-      <div v-if="displayItems.length === 0 && !search && !filterStatus" class="empty">
+    <main :class="['board-wrap', tweaks.tweaks.layout === 'quadro' && 'board-wrap--fixed']">
+      <!-- Empty state global -->
+      <div v-if="visible.length === 0 && !search" class="empty">
         <div class="empty-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.4"/>
@@ -162,11 +178,12 @@ function toggleStatus(id: string) {
         </button>
       </div>
 
-      <div v-else-if="displayItems.length === 0" class="empty">
+      <div v-else-if="visible.length === 0" class="empty">
         <div class="empty-title">{{ lang() === 'pt' ? 'Nenhum resultado' : 'No results' }}</div>
       </div>
 
-      <div v-else-if="tweaks.tweaks.layout === 'grid'" class="grid-board">
+      <!-- Galeria -->
+      <div v-else-if="tweaks.tweaks.layout === 'galeria'" class="galeria-board">
         <ItemCard
           v-for="item in displayItems"
           :key="item.id"
@@ -176,17 +193,27 @@ function toggleStatus(id: string) {
         />
       </div>
 
-      <div v-else-if="tweaks.tweaks.layout === 'list'" class="list-board">
-        <ItemCard
-          v-for="item in displayItems"
-          :key="item.id"
-          :item="item"
-          layout="list"
-          @click="openEdit(item)"
-        />
+      <!-- Histórico -->
+      <div v-else-if="tweaks.tweaks.layout === 'historico'" class="historico-board">
+        <div v-if="historyGroups.length === 0" class="empty">
+          <div class="empty-title">{{ lang() === 'pt' ? 'Nenhum resultado' : 'No results' }}</div>
+        </div>
+        <div v-for="group in historyGroups" :key="group.key" class="history-group">
+          <div class="history-period-label">{{ group.label() }}</div>
+          <div class="history-items">
+            <ItemCard
+              v-for="item in group.items"
+              :key="item.id"
+              :item="item"
+              layout="list"
+              @click="openEdit(item)"
+            />
+          </div>
+        </div>
       </div>
 
-      <div v-else class="board">
+      <!-- Quadro (kanban) -->
+      <div v-else class="board board--fixed">
         <BoardColumn
           v-for="status in STATUSES"
           :key="status.id"
@@ -230,7 +257,7 @@ function toggleStatus(id: string) {
 .toolbar-left { display: flex; align-items: center; gap: 8px; }
 .toolbar-right { display: flex; align-items: center; gap: 6px; }
 
-.cat-label { font-size: 13px; font-weight: 600; color: var(--fg-0); }
+.cat-label { font-size: 13px; font-weight: 600; color: var(--fg-0); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
 .item-count {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -322,7 +349,6 @@ function toggleStatus(id: string) {
   border-color: var(--accent-line);
   color: var(--accent);
 }
-
 .chip-count {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -330,24 +356,34 @@ function toggleStatus(id: string) {
 }
 
 .board-wrap { flex: 1; min-height: 0; overflow: auto; padding: 16px 20px 24px; }
+.board-wrap--fixed { overflow-y: hidden; }
 
 .board {
   display: grid;
   grid-template-columns: repeat(6, minmax(220px, 1fr));
   gap: 12px;
-  min-height: 100%;
 }
-.grid-board {
+.board--fixed { height: 100%; }
+
+.galeria-board {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 12px;
 }
-.list-board {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 720px;
+
+/* Histórico */
+.historico-board { max-width: 720px; }
+.history-group { margin-bottom: 28px; }
+.history-period-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-3);
+  margin-bottom: 8px;
+  padding-left: 2px;
 }
+.history-items { display: flex; flex-direction: column; gap: 6px; }
 
 /* Empty state */
 .empty {
