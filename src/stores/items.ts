@@ -52,6 +52,31 @@ export const useItemsStore = defineStore('items', () => {
     }
   }
 
+  function reorderInStatus(draggedId: string, targetId: string) {
+    const dragged = items.value.find(i => i.id === draggedId)
+    const target = items.value.find(i => i.id === targetId)
+    if (!dragged || !target || dragged.status !== target.status) return
+
+    const statusItems = items.value
+      .filter(i => i.status === dragged.status)
+      .sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0))
+
+    const fromIdx = statusItems.findIndex(i => i.id === draggedId)
+    const toIdx = statusItems.findIndex(i => i.id === targetId)
+    const adjustedToIdx = fromIdx < toIdx ? toIdx - 1 : toIdx
+    statusItems.splice(fromIdx, 1)
+    statusItems.splice(adjustedToIdx, 0, dragged)
+
+    const now = Date.now()
+    statusItems.forEach((item, idx) => {
+      const globalIdx = items.value.findIndex(i => i.id === item.id)
+      if (globalIdx !== -1) {
+        items.value[globalIdx] = { ...items.value[globalIdx], updatedAt: now - idx * 1000 }
+      }
+    })
+    persist()
+  }
+
   function exportJson(): string {
     return JSON.stringify(items.value, null, 2)
   }
@@ -85,7 +110,7 @@ export const useItemsStore = defineStore('items', () => {
     return out
   }
 
-  return { items, load, add, update, remove, moveToStatus, exportJson, importJson, countsByCategory, getFiltered }
+  return { items, load, add, update, remove, moveToStatus, reorderInStatus, exportJson, importJson, countsByCategory, getFiltered }
 })
 
 export { uid }
